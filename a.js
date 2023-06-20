@@ -1,11 +1,3 @@
-document.addEventListener(
-  "click",
-  () => {
-    currentCaretPosInLine = 0
-  },
-  true
-);
-
 function getLinesLength(lineNums) {
   let len = 0;
   for (let i = 0; i < lineNums; i++) {
@@ -96,5 +88,9 @@ document.querySelectorAll("textarea").forEach((elem) => {
       elem.selectionStart = toNextLine(elem);
       evt.preventDefault();
     }
+  });
+
+  elem.addEventListener("click", (evt) => {
+    currentCaretPosInLine = 0
   });
 });
