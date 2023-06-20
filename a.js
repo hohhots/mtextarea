@@ -1,3 +1,11 @@
+document.addEventListener(
+  "click",
+  () => {
+    currentCaretPosInLine = 0
+  },
+  true
+);
+
 function getLinesLength(lineNums) {
   let len = 0;
   for (let i = 0; i < lineNums; i++) {
