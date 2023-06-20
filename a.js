@@ -1,14 +1,3 @@
-const outElem = document.querySelector("pre");
-
-/* Clear the output */
-document.addEventListener(
-  "click",
-  () => {
-    outElem.textContent = "";
-  },
-  true
-);
-
 function getLinesLength(lineNums) {
   let len = 0;
   for (let i = 0; i < lineNums; i++) {
@@ -18,7 +7,6 @@ function getLinesLength(lineNums) {
 }
 
 function minLength(lineNum) {
-  console.log(textLines[lineNum] + " - " + currentCaretPosInLine);
   return textLines[lineNum].length < currentCaretPosInLine
     ? textLines[lineNum].length
     : currentCaretPosInLine;
@@ -40,7 +28,7 @@ function getLineNumber(elem, UpOrDown) {
 
   if (!currentCaretPosInLine || UpOrDown) {
     currentCaretPosInLine =
-      currentCaretPosition - allPreviousLinesTextLength - currentLineNumber + 1;
+      currentCaretPosition - allPreviousLinesTextLength;
   }
 }
 
@@ -100,9 +88,5 @@ document.querySelectorAll("textarea").forEach((elem) => {
       elem.selectionStart = toNextLine(elem);
       evt.preventDefault();
     }
-
-    outElem.textContent += `currentCaretPosition - ${currentCaretPosition}\n`;
-    outElem.textContent += `currentLineNumber - ${currentLineNumber}\n`;
-    outElem.textContent += `currentCaretPosInLine - ${currentCaretPosInLine}\n`;
   });
 });
