@@ -1,96 +1,115 @@
-function getLinesLength(lineNums) {
-  let len = 0;
-  for (let i = 0; i < lineNums; i++) {
-    len = len + textLines[i].length;
-  }
-  return len + lineNums;
-}
+function mTextArea() {
+  document.querySelectorAll("textarea").forEach((ele) => {
+    let elem = ele,
+      textLines = 0,
+      currentLineNumber = 0,
+      currentCaretPosition = 0,
+      currentCaretPosInLine = 0;
 
-function minLength(lineNum) {
-  return textLines[lineNum].length < currentCaretPosInLine
-    ? textLines[lineNum].length
-    : currentCaretPosInLine;
-}
-
-let textLines;
-let currentLineNumber = 0;
-let currentCaretPosition = 0;
-let currentCaretPosInLine = 0;
-
-function getLineNumber(elem, UpOrDown) {
-  textLines = elem.value.split("\n");
-
-  currentLineNumber = elem.value
-    .substr(0, currentCaretPosition)
-    .split("\n").length;
-
-  let allPreviousLinesTextLength = getLinesLength(currentLineNumber - 1);
-
-  if (!currentCaretPosInLine || UpOrDown) {
-    currentCaretPosInLine =
-      currentCaretPosition - allPreviousLinesTextLength;
-  }
-}
-
-function toPreviousLine(elem) {
-  getLineNumber(elem);
-  return getPreviousLineCaretPosition(elem);
-}
-
-function toNextLine(elem) {
-  getLineNumber(elem);
-  return getNextLineCaretPosition(elem);
-}
-
-function getPreviousLineCaretPosition(elem) {
-  if (currentLineNumber == 1) {
-    return currentCaretPosition;
-  }
-  return getLinesLength(currentLineNumber - 2) + minLength(currentLineNumber - 2);
-}
-
-function getNextLineCaretPosition(elem) {
-  if (textLines.length == currentLineNumber) {
-    return currentCaretPosition;
-  }
-  return getLinesLength(currentLineNumber) + minLength(currentLineNumber);
-}
-
-document.querySelectorAll("textarea").forEach((elem) => {
-  elem.addEventListener("keydown", (evt) => {
-    let k = evt.key;
-
-    if (k.toLowerCase() == "arrowdown") {
-      ++elem.selectionStart;
-      currentCaretPosition = elem.selectionStart;
-      getLineNumber(elem, true);
-      evt.preventDefault();
-    }
-
-    if (k.toLowerCase() == "arrowup") {
-      if (elem.selectionEnd == 0) {
-        return;
+    function getLinesLength(lineNums) {
+      let len = 0;
+      for (let i = 0; i < lineNums; i++) {
+        len = len + textLines[i].length;
       }
-      --elem.selectionEnd;
-      currentCaretPosition = elem.selectionEnd;
-      getLineNumber(elem, true);
-      evt.preventDefault();
+      return len + lineNums;
     }
 
-    if (k.toLowerCase() == "arrowleft") {
-      currentCaretPosition = elem.selectionStart;
-      elem.selectionEnd = toPreviousLine(elem);
-      evt.preventDefault();
+    function minLength(lineNum) {
+      return textLines[lineNum].length < currentCaretPosInLine
+        ? textLines[lineNum].length
+        : currentCaretPosInLine;
     }
 
-    if (k.toLowerCase() == "arrowright") {
-      currentCaretPosition = elem.selectionEnd;
-      elem.selectionStart = toNextLine(elem);
-      evt.preventDefault();
+    function init() {
+      textLines = elem.value.split("\n");
+
+      currentState("arrowdown");
     }
+
+    function currentState(k) {
+      k = k.toLowerCase();
+
+      if (k == "arrowdown" || k == "arrowleft") {
+        currentCaretPosition = elem.selectionStart;
+      }
+      if (k == "arrowup" || k == "arrowright") {
+        currentCaretPosition = elem.selectionEnd;
+      }
+
+      currentLineNumber = elem.value
+        .substring(0, currentCaretPosition)
+        .split("\n").length;
+
+      if (k == "arrowup" || k == "arrowdown") {
+        currentCaretPosInLine =
+          currentCaretPosition - getLinesLength(currentLineNumber - 1);
+      }
+    }
+
+    function toPreviousLine() {
+      return getPreviousLineCaretPosition();
+    }
+
+    function toNextLine() {
+      return getNextLineCaretPosition();
+    }
+
+    function getPreviousLineCaretPosition() {
+      if (currentLineNumber == 1) {
+        return currentCaretPosition;
+      }
+      return (
+        getLinesLength(currentLineNumber - 2) + minLength(currentLineNumber - 2)
+      );
+    }
+
+    function getNextLineCaretPosition(elem) {
+      if (textLines.length == currentLineNumber) {
+        return currentCaretPosition;
+      }
+      return getLinesLength(currentLineNumber) + minLength(currentLineNumber);
+    }
+
+    function keyHandler(evt) {
+      let k = evt.key.toLowerCase();
+
+      if (k == "arrowdown") {
+        ++elem.selectionStart;
+        currentState(k);
+        evt.preventDefault();
+      }
+
+      if (k == "arrowup") {
+        if (elem.selectionEnd == 0) {
+          return;
+        }
+        --elem.selectionEnd;
+        currentState(k);
+        evt.preventDefault();
+      }
+
+      if (k == "arrowleft") {
+        currentState(k);
+        elem.selectionEnd = toPreviousLine();
+        evt.preventDefault();
+      }
+
+      if (k == "arrowright") {
+        currentState(k);
+        elem.selectionStart = toNextLine();
+        evt.preventDefault();
+      }
+    }
+
+    function clickHandler(evt) {
+      currentState("arrowup");
+    }
+
+    elem.addEventListener("keydown", keyHandler);
+    elem.addEventListener("click", clickHandler);
+
+    init();
   });
+}
 
-  elem.addEventListener("click", (evt) => {
-    currentCaretPosInLine = 0
-  });
-});
+mTextArea();
