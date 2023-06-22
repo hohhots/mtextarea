@@ -45,16 +45,8 @@ function mTextArea() {
           currentCaretPosition - getLinesLength(currentLineNumber - 1);
       }
     }
-
+    
     function toPreviousLine() {
-      return getPreviousLineCaretPosition();
-    }
-
-    function toNextLine() {
-      return getNextLineCaretPosition();
-    }
-
-    function getPreviousLineCaretPosition() {
       if (currentLineNumber == 1) {
         return currentCaretPosition;
       }
@@ -63,7 +55,7 @@ function mTextArea() {
       );
     }
 
-    function getNextLineCaretPosition(elem) {
+    function toNextLine(elem) {
       if (textLines.length == currentLineNumber) {
         return currentCaretPosition;
       }
