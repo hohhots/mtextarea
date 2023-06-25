@@ -45,13 +45,18 @@ function mTextArea() {
           currentCaretPosition - getLinesLength(currentLineNumber - 1);
       }
     }
-    
+
     function toPreviousLine() {
       if (currentLineNumber == 1) {
         return currentCaretPosition;
       }
+
       return (
-        getLinesLength(currentLineNumber - 2) + minLength(currentLineNumber - 2)
+        currentCaretPosition -
+        minLength(currentLineNumber - 1) -
+        textLines[currentLineNumber - 2].length -
+        1 +
+        minLength(currentLineNumber - 2)
       );
     }
 
@@ -59,7 +64,13 @@ function mTextArea() {
       if (textLines.length == currentLineNumber) {
         return currentCaretPosition;
       }
-      return getLinesLength(currentLineNumber) + minLength(currentLineNumber);
+      return (
+        currentCaretPosition -
+        minLength(currentLineNumber - 1) +
+        textLines[currentLineNumber - 1].length +
+        1 +
+        minLength(currentLineNumber)
+      );
     }
 
     function keyHandler(evt) {
